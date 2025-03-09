@@ -151,11 +151,11 @@ SaveSAV:
 	and a
 	ret nz
 .save
-	call SaveSAVtoSRAM
 	ld hl, SavingText
 	call PrintText
 	ld c, 128
 	call DelayFrames
+	call SaveSAVtoSRAM
 	ld hl, GameSavedText
 	call PrintText
 	ld c, 10
@@ -208,6 +208,10 @@ SaveSAVtoSRAM0:
 	ld hl, wSpriteDataStart
 	ld de, sSpriteData
 	ld bc, wSpriteDataEnd - wSpriteDataStart
+	call CopyData
+	ld hl, wPartyDataStart
+	ld de, sPartyData
+	ld bc, wPartyDataEnd - wPartyDataStart
 	call CopyData
 	ld hl, wBoxDataStart
 	ld de, sCurBoxData
@@ -267,9 +271,7 @@ SaveSAVtoSRAM2:
 SaveSAVtoSRAM::
 	ld a, $2
 	ld [wSaveFileStatus], a
-	call SaveSAVtoSRAM0
-	call SaveSAVtoSRAM1
-	jp SaveSAVtoSRAM2
+	jp SaveSAVtoSRAM0
 
 SAVCheckSum:
 ;Check Sum (result[1 byte] is complemented)
