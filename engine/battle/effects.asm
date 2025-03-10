@@ -59,6 +59,8 @@ SleepEffect:
 	call BattleRandom
 	and $7
 	jr z, .setSleepCounter
+	cp $7
+	jr z, .setSleepCounter
 	ld b, a
 	ld a, [wUnknownSerialFlag_d499]
 	and a
