@@ -151,7 +151,7 @@ INCLUDE "engine/slots/game_corner_slots2.asm"
 
 SECTION "Slot Machines", ROMX
 
-INCLUDE "engine/movie/title_rb.asm"
+INCLUDE "engine/movie/title2.asm"
 INCLUDE "engine/slots/slot_machine.asm"
 INCLUDE "engine/slots/game_corner_slots.asm"
 
@@ -409,7 +409,6 @@ INCLUDE "engine/predefs.asm"
 SECTION "Surfing Minigame", ROMX
 
 INCLUDE "engine/minigame/surfing_pikachu.asm"
-INCLUDE "engine/movie/intro_yellow.asm"
 INCLUDE "engine/gfx/animated_objects.asm"
 
 
