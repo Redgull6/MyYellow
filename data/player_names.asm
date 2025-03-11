@@ -1,13 +1,13 @@
 DefaultNamesPlayer:
 	db   "NEW NAME"
-	next "YELLOW"
+	next "RED"
 	next "ASH"
-	next "JACK"
+	next "NINTEN"
 	db   "@"
 
 DefaultNamesRival:
 	db   "NEW NAME"
 	next "BLUE"
 	next "GARY"
-	next "JOHN"
+	next "SONY"
 	db   "@"

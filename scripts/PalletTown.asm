@@ -14,8 +14,6 @@ PalletTown_ScriptPointers:
 	dw_const PalletTownOakHeyWaitScript,           SCRIPT_PALLETTOWN_OAK_HEY_WAIT
 	dw_const PalletTownOakWalksToPlayerScript,     SCRIPT_PALLETTOWN_OAK_WALKS_TO_PLAYER
 	dw_const PalletTownOakGreetsPlayerScript,      SCRIPT_PALLETTOWN_OAK_GREETS_PLAYER
-	dw_const PalletTownPikachuBattleScript,        SCRIPT_PALLETTOWN_PIKACHU_BATTLE
-	dw_const PalletTownAfterPikachuBattleScript,   SCRIPT_PALLETTOWN_AFTER_PIKACHU_BATTLE
 	dw_const PalletTownOakNotSafeComeWithMeScript, SCRIPT_PALLETTOWN_OAK_NOT_SAFE_COME_WITH_ME
 	dw_const PalletTownPlayerFollowsOakScript,     SCRIPT_PALLETTOWN_PLAYER_FOLLOWS_OAK
 	dw_const PalletTownDaisyScript,                SCRIPT_PALLETTOWN_DAISY
@@ -25,21 +23,14 @@ PalletTownDefaultScript:
 	CheckEvent EVENT_FOLLOWED_OAK_INTO_LAB
 	ret nz
 	ld a, [wYCoord]
-	cp 0 ; is player at north exit?
+	cp 1 ; is player near north exit?
 	ret nz
-	ResetEvent EVENT_PLAYER_AT_RIGHT_EXIT_TO_PALLET_TOWN
-	ld a, [wXCoord]
-	cp 10
-	jr z, .asm_18e40
-	SetEventReuseHL EVENT_PLAYER_AT_RIGHT_EXIT_TO_PALLET_TOWN
-.asm_18e40
 	xor a
 	ldh [hJoyHeld], a
-	ld a, A_BUTTON | B_BUTTON | SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
-	ld [wJoyIgnore], a
-	ld a, PLAYER_DIR_UP
+	ld a, PLAYER_DIR_DOWN
 	ld [wPlayerMovingDirection], a
-	call StopAllMusic
+	ld a, SFX_STOP_ALL_MUSIC
+	call PlaySound
 	ld a, BANK(Music_MeetProfOak)
 	ld c, a
 	ld a, MUSIC_MEET_PROF_OAK ; "oak appears" music
@@ -52,8 +43,6 @@ PalletTownDefaultScript:
 	ret
 
 PalletTownOakHeyWaitScript:
-	ld a, ~(A_BUTTON | B_BUTTON)
-	ld [wJoyIgnore], a
 	xor a
 	ld [wOakWalkedToPlayer], a
 	ld a, TEXT_PALLETTOWN_OAK
@@ -61,18 +50,9 @@ PalletTownOakHeyWaitScript:
 	call DisplayTextID
 	ld a, A_BUTTON | B_BUTTON | SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
 	ld [wJoyIgnore], a
-	ld hl, wSprite01StateData2MapY
-	ld a, 8
-	ld [hli], a ; SPRITESTATEDATA2_MAPY
-	ld a, 14
-	ld [hl], a ; SPRITESTATEDATA2_MAPX
 	ld a, HS_PALLET_TOWN_OAK
 	ld [wMissableObjectIndex], a
 	predef ShowObject
-	ld a, $2
-	ld [wSprite01StateData1MovementStatus], a
-	ld a, SPRITE_FACING_UP
-	ld [wSprite01StateData1FacingDirection], a
 
 	; trigger the next script
 	ld a, SCRIPT_PALLETTOWN_OAK_WALKS_TO_PLAYER
@@ -80,8 +60,13 @@ PalletTownOakHeyWaitScript:
 	ret
 
 PalletTownOakWalksToPlayerScript:
+	ld a, 1
+	ldh [hSpriteIndex], a
+	ld a, SPRITE_FACING_UP
+	ldh [hSpriteFacingDirection], a
+	call SetSpriteFacingDirectionAndDelay
 	call Delay3
-	ld a, 0
+	ld a, 1
 	ld [wYCoord], a
 	ld a, 1
 	ldh [hNPCPlayerRelativePosPerspective], a
@@ -96,7 +81,9 @@ PalletTownOakWalksToPlayerScript:
 	ld a, PALLETTOWN_OAK
 	ldh [hSpriteIndex], a
 	call MoveSprite
-
+	ld a, $FF
+	ld [wJoyIgnore], a
+	
 	; trigger the next script
 	ld a, SCRIPT_PALLETTOWN_OAK_GREETS_PLAYER
 	ld [wPalletTownCurScript], a
@@ -106,76 +93,18 @@ PalletTownOakGreetsPlayerScript:
 	ld a, [wStatusFlags5]
 	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
-	ld a, ~(A_BUTTON | B_BUTTON)
-	ld [wJoyIgnore], a
+	xor a ; ld a, SPRITE_FACING_DOWN
+	ld [wSpritePlayerStateData1FacingDirection], a
 	ld a, 1
 	ld [wOakWalkedToPlayer], a
-	ld a, $2
-	ld [wSprite01StateData1MovementStatus], a
-	ld a, SPRITE_FACING_UP
-	ld [wSprite01StateData1FacingDirection], a
+	ld a, $FC
+	ld [wJoyIgnore], a
 	ld a, TEXT_PALLETTOWN_OAK
 	ldh [hTextID], a
 	call DisplayTextID
-	; oak faces the horizontally adjacent patch of grass to face pikachu
+	; set up movement script that cause the player to follow Oak to his lab
 	ld a, A_BUTTON | B_BUTTON | SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
 	ld [wJoyIgnore], a
-	ld a, $2
-	ld [wSprite01StateData1MovementStatus], a
-	CheckEvent EVENT_PLAYER_AT_RIGHT_EXIT_TO_PALLET_TOWN
-	ld a, SPRITE_FACING_RIGHT
-	jr z, .asm_18f01
-	ld a, SPRITE_FACING_LEFT
-.asm_18f01
-	ld [wSprite01StateData1FacingDirection], a
-
-	; trigger the next script
-	ld a, SCRIPT_PALLETTOWN_PIKACHU_BATTLE
-	ld [wPalletTownCurScript], a
-	ret
-
-PalletTownPikachuBattleScript:
-	; start the pikachu battle
-	ld a, ~(A_BUTTON | B_BUTTON)
-	ld [wJoyIgnore], a
-	xor a
-	ld [wListScrollOffset], a
-	ld a, BATTLE_TYPE_PIKACHU
-	ld [wBattleType], a
-	ld a, STARTER_PIKACHU
-	ld [wCurOpponent], a
-	ld a, 5
-	ld [wCurEnemyLevel], a
-
-	; trigger the next script
-	ld a, SCRIPT_PALLETTOWN_AFTER_PIKACHU_BATTLE
-	ld [wPalletTownCurScript], a
-	ret
-
-PalletTownAfterPikachuBattleScript:
-	ld a, 2
-	ld [wOakWalkedToPlayer], a
-	ld a, TEXT_PALLETTOWN_OAK
-	ldh [hTextID], a
-	call DisplayTextID
-	ld a, $2
-	ld [wSprite01StateData1MovementStatus], a
-	ld a, SPRITE_FACING_UP
-	ld [wSprite01StateData1FacingDirection], a
-	ld a, TEXT_PALLETTOWN_OAK_COME_WITH_ME
-	ldh [hTextID], a
-	call DisplayTextID
-	ld a, A_BUTTON | B_BUTTON | SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
-	ld [wJoyIgnore], a
-
-	; trigger the next script
-	ld a, SCRIPT_PALLETTOWN_OAK_NOT_SAFE_COME_WITH_ME
-	ld [wPalletTownCurScript], a
-	ret
-
-PalletTownOakNotSafeComeWithMeScript:
-	xor a
-	ld [wSpritePlayerStateData1FacingDirection], a
 	ld a, PALLETTOWN_OAK
 	ld [wSpriteIndex], a
 	xor a
@@ -271,21 +200,16 @@ PalletTownOakText:
 	text_asm
 	ld c, 10
 	call DelayFrames
+	xor a
+	ld [wEmotionBubbleSpriteIndex], a ; player's sprite
+	ld [wWhichEmotionBubble], a ; EXCLAMATION_BUBBLE
+	predef EmotionBubble
 	ld a, PLAYER_DIR_DOWN
 	ld [wPlayerMovingDirection], a
-	ld a, 0
-	ld [wEmotionBubbleSpriteIndex], a ; player's sprite
-	ld a, EXCLAMATION_BUBBLE
-	ld [wWhichEmotionBubble], a
-	predef EmotionBubble
 	jp TextScriptEnd
 
 .ThatWasCloseText:
 	text_far _PalletTownOakThatWasCloseText
-	text_end
-
-.WhewText:
-	text_far _PalletTownOakWhewText
 	text_end
 
 PalletTownOakComeWithMe:
@@ -305,23 +229,8 @@ PalletTownOaksLabSignText:
 	text_end
 
 PalletTownSignText:
-IF DEF(_DEBUG)
-	text_asm
-	ld a, 239
-	inc a
-	ld [wWhichPewterGuy], a
-	ld hl, .Text
-	call PrintText
-	jp TextScriptEnd
-
-.Text:
-	text_decimal wWhichPewterGuy, 1, 3
-	text "bit"
-	done
-ELSE
 	text_far _PalletTownSignText
 	text_end
-ENDC
 
 PalletTownPlayersHouseSignText:
 	text_far _PalletTownPlayersHouseSignText

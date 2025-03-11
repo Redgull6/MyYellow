@@ -6,18 +6,12 @@ _PalletTownOakHeyWaitDontGoOutText::
 _PalletTownOakThatWasCloseText::
 	text "OAK: That was"
 	line "close!"
-
-	para "Wild #MON live"
-	line "in tall grass!"
-	done
-
-_PalletTownOakWhewText::
-	text "OAK: Whew..."
 	done
 
 _PalletTownOakComeWithMe::
-	text "OAK: A #MON can"
-	line "appear anytime in"
+	text "OAK: It's unsafe!"
+	line "Wild #MON can"
+	cont "appear anytime in"
 	cont "tall grass."
 
 	para "You need your own"

@@ -79,10 +79,6 @@ PalletMovementScript_OakMoveLeft:
 	ld a, $3
 	ld [wNPCMovementScriptFunctionNum], a
 .done
-	ld a, BANK(Music_MuseumGuy)
-	ld c, a
-	ld a, MUSIC_MUSEUM_GUY
-	call PlayMusic
 	ld hl, wStatusFlags7
 	set BIT_NO_MAP_MUSIC, [hl]
 	ld a, SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
@@ -131,9 +127,8 @@ PalletMovementScript_WalkToLab:
 	ld [wNPCMovementScriptFunctionNum], a
 	ret
 
-
 RLEList_ProfOakWalkToLab:
-	db NPC_MOVEMENT_DOWN, 6 ; differs from red
+	db NPC_MOVEMENT_DOWN, 5 ; differs from red
 	db NPC_MOVEMENT_LEFT, 1
 	db NPC_MOVEMENT_DOWN, 5
 	db NPC_MOVEMENT_RIGHT, 3
@@ -146,7 +141,7 @@ RLEList_PlayerWalkToLab:
 	db D_RIGHT, 3
 	db D_DOWN, 5
 	db D_LEFT, 1
-	db D_DOWN, 7 ; differs from red
+	db D_DOWN, 6 ; differs from red
 	db -1 ; end
 
 PalletMovementScript_Done:
