@@ -1,4 +1,4 @@
 ---
-name: Update to pokeyellow
-about: Suggest a possible change to pokeyellow itself.
+name: Update to pokeMyYellow
+about: Suggest a possible change to pokeMyYellow itself.
 ---
