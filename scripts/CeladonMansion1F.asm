@@ -1,6 +1,5 @@
 CeladonMansion1F_Script:
-	call EnableAutoTextBoxDrawing
-	ret
+	jp EnableAutoTextBoxDrawing
 
 CeladonMansion1F_TextPointers:
 	def_text_pointers
@@ -10,39 +9,31 @@ CeladonMansion1F_TextPointers:
 	dw_const CeladonMansion1FNidoranFText,          TEXT_CELADONMANSION1F_NIDORANF
 	dw_const CeladonMansion1FManagersSuiteSignText, TEXT_CELADONMANSION1F_MANAGERS_SUITE_SIGN
 
+CeladonMansion1F_PlayCryScript:
+	call PlayCry
+	jp TextScriptEnd
+	
 CeladonMansion1FMeowthText:
 	text_far _CeladonMansion1FMeowthText
 	text_asm
 	ld a, MEOWTH
-	call PlayCry
-	jp TextScriptEnd
+	CeladonMansion1F_PlayCryScript:
 
 CeladonMansion1FGrannyText:
-	text_asm
-	farcall CeladonMansion1FPrintGrannyText
-	ld a, [wPikachuHappiness]
-	cp 251
-	jr c, .asm_485d9
-	ld c, 50
-	call DelayFrames
-	ldpikacry e, PikachuCry23
-	callfar PlayPikachuSoundClip
-.asm_485d9
-	jp TextScriptEnd
+	text_far _CeladonMansion1FGrannyText
+	text_end
 
 CeladonMansion1FClefairyText:
 	text_far _CeladonMansion1FClefairyText
 	text_asm
 	ld a, CLEFAIRY
-	call PlayCry
-	jp TextScriptEnd
+	jp CeladonMansion1F_PlayCryScript
 
 CeladonMansion1FNidoranFText:
 	text_far _CeladonMansion1FNidoranFText
 	text_asm
 	ld a, NIDORAN_F
-	call PlayCry
-	jp TextScriptEnd
+	jp CeladonMansion1F_PlayCryScript
 
 CeladonMansion1FManagersSuiteSignText:
 	text_far _CeladonMansion1FManagersSuiteSignText

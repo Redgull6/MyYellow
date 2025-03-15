@@ -23,17 +23,16 @@ Route22NoopScript:
 	ret
 
 Route22Script_50ed6:
-	ld a, OPP_RIVAL1
-	ld [wCurOpponent], a
-	ld a, $2
-	ld [wTrainerNo], a
-	ret
-
-Route22Script_50ee1:
-	ld a, OPP_RIVAL2
-	ld [wCurOpponent], a
 	ld a, [wRivalStarter]
-	add 7
+	ld b, a
+.asm_50eda
+	ld a, [hli]
+	cp b
+	jr z, .asm_50ee1
+	inc hl
+	jr .asm_50eda
+.asm_50ee1
+	ld a, [hl]
 	ld [wTrainerNo], a
 	ret
 
@@ -131,11 +130,20 @@ Route22Rival1StartBattleScript:
 	ld hl, Route22Rival1DefeatedText
 	ld de, Route22Rival1VictoryText
 	call SaveEndBattleTextPointers
+	ld a, OPP_RIVAL1
+	ld [wCurOpponent], a
+	ld hl, StarterMons_50faf
 	call Route22Script_50ed6
 	ld a, SCRIPT_ROUTE22_RIVAL1_AFTER_BATTLE
 	ld [wRoute22CurScript], a
 	ret
-
+	
+StarterMons_50faf:
+; starter the rival picked, rival trainer number
+	db STARTER2, 4
+	db STARTER3, 5
+	db STARTER1, 6
+	
 Route22Rival1DefeatedText:
 	text_far _Route22Rival1DefeatedText
 	text_end
@@ -148,12 +156,6 @@ Route22Rival1AfterBattleScript:
 	ld a, [wIsInBattle]
 	cp $ff
 	jp z, Route22SetDefaultScript
-	ld a, [wRivalStarter]
-	cp RIVAL_STARTER_FLAREON
-	jr nz, .keep_rival_starter
-	ld a, RIVAL_STARTER_JOLTEON
-	ld [wRivalStarter], a
-.keep_rival_starter
 	ld a, [wSpritePlayerStateData1FacingDirection]
 	and a ; cp SPRITE_FACING_DOWN
 	jr nz, .not_facing_down
@@ -286,10 +288,18 @@ Route22Rival2StartBattleScript:
 	ld hl, Route22Rival2DefeatedText
 	ld de, Route22Rival2VictoryText
 	call SaveEndBattleTextPointers
-	call Route22Script_50ee1
+	ld a, OPP_RIVAL2
+	ld [wCurOpponent], a
+	ld hl, StarterMons_510d9
+	call Route22Script_50ed6
 	ld a, SCRIPT_ROUTE22_RIVAL2_AFTER_BATTLE
 	ld [wRoute22CurScript], a
 	ret
+
+StarterMons_510d9:
+	db STARTER2, 10
+	db STARTER3, 11
+	db STARTER1, 12
 
 Route22Rival2DefeatedText:
 	text_far _Route22Rival2DefeatedText

@@ -17,19 +17,14 @@ BillsHouse_ScriptPointers:
 	dw_const BillsHouseScript6, SCRIPT_BILLSHOUSE_SCRIPT6
 	dw_const BillsHouseScript7, SCRIPT_BILLSHOUSE_SCRIPT7
 	dw_const BillsHouseScript8, SCRIPT_BILLSHOUSE_SCRIPT8
-	dw_const BillsHouseScript9, SCRIPT_BILLSHOUSE_SCRIPT9
 
 BillsHouseScript_1e09e:
-	ld hl, wd492
-	bit 7, [hl]
-	set 7, [hl]
-	ret nz
 	CheckEventHL EVENT_MET_BILL_2
 	jr z, .asm_1e0af
 	jr .asm_1e0b3
 
 .asm_1e0af
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT0
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT1
 	jr .asm_1e0b5
 
 .asm_1e0b3
@@ -39,39 +34,19 @@ BillsHouseScript_1e09e:
 	ret
 
 BillsHouseScript0:
-	ld a, [wd471]
-	bit 7, a
-	jr z, .asm_1e0d2
-	callfar CheckPikachuFaintedOrStatused
-	jr c, .asm_1e0d2
-	callfar Func_f24d5
-.asm_1e0d2
-	xor a
-	ld [wJoyIgnore], a
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT1
-	ld [wBillsHouseCurScript], a
 	ret
 
 BillsHouseScript1:
-	ret
-
-BillsHouseScript2:
-	ld a, A_BUTTON | B_BUTTON | SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
-	ld [wJoyIgnore], a
 	ld a, [wSpritePlayerStateData1FacingDirection]
 	and a ; cp SPRITE_FACING_DOWN
 	ld de, MovementData_1e79c
 	jr nz, .notDown
-	call CheckPikachuFollowingPlayer
-	jr nz, .asm_1e0f8
-	callfar Func_f250b
-.asm_1e0f8
 	ld de, MovementData_1e7a0
 .notDown
 	ld a, BILLSHOUSE_BILL_POKEMON
 	ldh [hSpriteIndex], a
 	call MoveSprite
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT3
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT2
 	ld [wBillsHouseCurScript], a
 	ret
 
@@ -90,58 +65,30 @@ MovementData_1e7a0:
 	db NPC_MOVEMENT_UP
 	db -1 ; end
 
-BillsHouseScript3:
+BillsHouseScript2:
 	ld a, [wStatusFlags5]
 	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
 	ld a, HS_BILL_POKEMON
 	ld [wMissableObjectIndex], a
 	predef HideObject
-	call CheckPikachuFollowingPlayer
-	jr z, .asm_1e13e
-	ld hl, PikachuMovementData_1e14d
-	ld a, [wSpritePlayerStateData1FacingDirection]
-	and a ; cp SPRITE_FACING_DOWN
-	jr nz, .asm_1e133
-	ld hl, PikachuMovementData_1e152
-.asm_1e133
-	call ApplyPikachuMovementData
-	callfar InitializePikachuTextID
-.asm_1e13e
+	SetEvent EVENT_BILL_SAID_USE_CELL_SEPARATOR
 	xor a
 	ld [wJoyIgnore], a
-	SetEvent EVENT_BILL_SAID_USE_CELL_SEPARATOR
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT4
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT3
 	ld [wBillsHouseCurScript], a
 	ret
 
-PikachuMovementData_1e14d:
-	db $00
-	db $1e
-	db $1e
-	db $1e
-	db $3f
-
-PikachuMovementData_1e152:
-	db $00
-	db $1e
-	db $1f
-	db $1e
-	db $1e
-	db $20
-	db $36
-	db $3f
-
-BillsHouseScript4:
+BillsHouseScript3:
 	CheckEvent EVENT_USED_CELL_SEPARATOR_ON_BILL
 	ret z
 	ld a, SELECT | START | D_RIGHT | D_LEFT | D_UP | D_DOWN
 	ld [wJoyIgnore], a
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT5
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT4
 	ld [wBillsHouseCurScript], a
 	ret
 
-BillsHouseScript5:
+BillsHouseScript4:
 	ld a, BILLSHOUSE_BILL1
 	ld [wSpriteIndex], a
 	ld a, $c
@@ -158,30 +105,11 @@ BillsHouseScript5:
 	predef ShowObject
 	ld c, 8
 	call DelayFrames
-	ld hl, wd471
-	bit 7, [hl]
-	jr z, .asm_1e1c6
-	call CheckPikachuFollowingPlayer
-	jr z, .asm_1e1c6
-	ld a, BILLSHOUSE_BILL1
-	ldh [hSpriteIndex], a
-	ld a, SPRITE_FACING_DOWN
-	ldh [hSpriteFacingDirection], a
-	call SetSpriteFacingDirectionAndDelay
-	ld hl, PikachuMovementData_1e1a9
-	call ApplyPikachuMovementData
-	ld a, $f
-	ld [wEmotionBubbleSpriteIndex], a
-	ld a, EXCLAMATION_BUBBLE
-	ld [wWhichEmotionBubble], a
-	predef EmotionBubble
-	callfar InitializePikachuTextID
-.asm_1e1c6
 	ld a, BILLSHOUSE_BILL1
 	ldh [hSpriteIndex], a
 	ld de, MovementData_1e807
 	call MoveSprite
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT6
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT5
 	ld [wBillsHouseCurScript], a
 	ret
 
@@ -193,12 +121,7 @@ MovementData_1e807:
 	db NPC_MOVEMENT_DOWN
 	db -1 ; end
 
-PikachuMovementData_1e1a9:
-	db $00
-	db $37
-	db $3f
-
-BillsHouseScript6:
+BillsHouseScript5:
 	ld a, [wStatusFlags5]
 	bit BIT_SCRIPTED_NPC_MOVEMENT, a
 	ret nz
@@ -208,7 +131,7 @@ BillsHouseScript6:
 	ld [wBillsHouseCurScript], a
 	ret
 
-BillsHouseScript7:
+BillsHouseScript6:
 	xor a
 	ld [wPlayerMovingDirection], a
 	ld a, SPRITE_FACING_UP
@@ -221,7 +144,7 @@ BillsHouseScript7:
 	dec a
 	ld [wSimulatedJoypadStatesIndex], a
 	call StartSimulatingJoypadStates
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT8
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT7
 	ld [wBillsHouseCurScript], a
 	ret
 
@@ -229,7 +152,7 @@ RLE_1e219:
 	db D_RIGHT, $3
 	db $FF
 
-BillsHouseScript8:
+BillsHouseScript7:
 	ld a, [wSimulatedJoypadStatesIndex]
 	and a
 	ret nz
@@ -247,7 +170,7 @@ BillsHouseScript8:
 	ld a, TEXT_BILLSHOUSE_BILL_SS_TICKET
 	ldh [hTextID], a
 	call DisplayTextID
-	ld a, SCRIPT_BILLSHOUSE_SCRIPT9
+	ld a, SCRIPT_BILLSHOUSE_SCRIPT8
 	ld [wBillsHouseCurScript], a
 	ret
 

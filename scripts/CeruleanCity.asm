@@ -139,9 +139,23 @@ CeruleanCityRivalBattleScript:
 	call SaveEndBattleTextPointers
 	ld a, OPP_RIVAL1
 	ld [wCurOpponent], a
-	ld a, 3
+	
+	; select which team to use during the encounter
+	ld a, [wRivalStarter]
+	cp STARTER2
+	jr nz, .NotSquirtle
+	ld a, $7
+	jr .done
+.NotSquirtle
+	cp STARTER3
+	jr nz, .Charmander
+	ld a, $8
+	jr .done
+.Charmander
+	ld a, $9
+.done
 	ld [wTrainerNo], a
-	xor a
+	
 	ldh [hJoyHeld], a
 	call CeruleanCityFaceRivalScript
 	ld a, SCRIPT_CERULEANCITY_RIVAL_DEFEATED

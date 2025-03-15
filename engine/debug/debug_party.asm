@@ -16,7 +16,7 @@ DebugNewGameParty: ; unreferenced except in _DEBUG
 	db SNORLAX, 80
 	db PERSIAN, 80
 	db JIGGLYPUFF, 15
-	db STARTER_PIKACHU, 5
+	db PIKACHU, 5
 	db -1 ; end
 
 PrepareNewGameDebug: ; dummy except in _DEBUG
@@ -74,14 +74,14 @@ IF DEF(_DEBUG)
 	call DebugSetPokedexEntries
 	SetEvent EVENT_GOT_POKEDEX
 
-	; Rival chose Jolteon.
+	; Rival chose Squirtle,
+	; Player chose Charmander.
 	ld hl, wRivalStarter
 	ASSERT wRivalStarter + 2 == wPlayerStarter
-	ld a, RIVAL_STARTER_JOLTEON
+	ld a, STARTER2
 	ld [hli], a
-	ld a, NUM_POKEMON
-	ld [hli], a ; hl = wUnknownDebugByte
-	ld a, STARTER_PIKACHU
+	inc [hl], a ; hl = wPlayerStarter
+	ld a, STARTER1
 	ld [hl], a
 
 	; Give max money.

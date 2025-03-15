@@ -144,14 +144,11 @@ StartMenu_Pokemon::
 	call ChooseFlyDestination
 	ld a, [wStatusFlags6]
 	bit BIT_FLY_WARP, a
-	jr nz, .asm_5d4c
+	jp nz, .goBackToMap
 	call LoadFontTilePatterns
 	ld hl, wStatusFlags4
 	set BIT_UNKNOWN_4_1, [hl]
 	jp StartMenu_Pokemon
-.asm_5d4c
-	call Func_1510
-	jp .goBackToMap
 .cut
 	bit BIT_CASCADEBADGE, a
 	jp z, .newBadgeRequired
@@ -169,14 +166,19 @@ StartMenu_Pokemon::
 	res BIT_SURF_ALLOWED, [hl]
 	jp z, .loop
 	ld a, [wCurPartySpecies]
-	cp STARTER_PIKACHU
+	cp PIKACHU ; is this surfing pikachu?
 	jr z, .surfingPikachu
-	ld a, $1
+	cp LAPRAS
+	jr z, .surfingLapras
+	xor a
 	jr .continue
 .surfingPikachu
+	ld a, $1
+	jr .continue
+.surfingLapras
 	ld a, $2
 .continue
-	ld [wd472], a
+	ld [wSurfSpriteID], a
 	ld a, SURFBOARD
 	ld [wCurItem], a
 	ld [wPseudoItemID], a
@@ -188,7 +190,7 @@ StartMenu_Pokemon::
 	jp .goBackToMap
 .reloadNormalSprite
 	xor a
-	ld [wd472], a
+	ld [wSurfSpriteID], a
 	jp .loop
 .strength
 	bit BIT_RAINBOWBADGE, a
@@ -233,7 +235,6 @@ StartMenu_Pokemon::
 	ld hl, wStatusFlags6
 	set BIT_FLY_WARP, [hl]
 	set BIT_ESCAPE_WARP, [hl]
-	call Func_1510
 	ld hl, wStatusFlags4
 	set BIT_UNKNOWN_4_1, [hl]
 	res BIT_NO_BATTLES, [hl]

@@ -2,33 +2,68 @@ _OaksLabRivalGrampsIsntAroundText::
 	text "<RIVAL>: Yo"
 	line "<PLAYER>! Gramps"
 	cont "isn't around!"
-
-	para "I ran here 'cos"
-	line "he said he had a"
-	cont "#MON for me."
 	done
 
-_OaksLabRivalIllGetABetterPokemonThanYou::
-	text "<RIVAL>: Humph!"
-	line "I'll get a better"
-	cont "#MON than you!"
+_OaksLabRivalGoAheadAndChooseText::
+	text "<RIVAL>: Heh, I"
+	line "don't need to be"
+	cont "greedy like you!"
+
+	para "Go ahead and"
+	line "choose, <PLAYER>!"
 	done
 
 _OaksLabRivalMyPokemonLooksStrongerText::
-	text "<RIVAL>: Heh, my"
+	text "<RIVAL>: My"
 	line "#MON looks a"
 	cont "lot stronger."
 	done
 
-_OaksLabThatsAPokeball::
-	text "That's a #"
-	line "BALL. There's a"
-	cont "#MON inside!"
+_OaksLabThoseArePokeBallsText::
+	text "Those are #"
+	line "BALLs. They"
+	cont "contain #MON!"
 	done
 
-_OaksLabOak1GoAheadItsYours::
-	text "OAK: Go ahead,"
-	line "it's yours!"
+_OaksLabYouWantCharmanderText::
+	text "So! You want the"
+	line "fire #MON,"
+	cont "CHARMANDER?"
+	done
+
+_OaksLabYouWantSquirtleText::
+	text "So! You want the"
+	line "water #MON,"
+	cont "SQUIRTLE?"
+	done
+
+_OaksLabYouWantBulbasaurText::
+	text "So! You want the"
+	line "plant #MON,"
+	cont "BULBASAUR?"
+	done
+
+_OaksLabMonEnergeticText::
+	text "This #MON is"
+	line "really energetic!"
+	prompt
+
+_OaksLabReceivedMonText::
+	text "<PLAYER> received"
+	line "a @"
+	text_ram wNameBuffer
+	text "!@"
+	text_end
+
+_OaksLabLastMonText::
+	text "That's PROF.OAK's"
+	line "last #MON!"
+	done
+
+_OaksLabOak1WhichPokemonDoYouWantText::
+	text "OAK: Now, <PLAYER>,"
+	line "which #MON do"
+	cont "you want?"
 	done
 
 _OaksLabOak1YourPokemonCanFightText::
@@ -36,15 +71,13 @@ _OaksLabOak1YourPokemonCanFightText::
 	line "#MON appears,"
 	cont "your #MON can"
 	cont "fight against it!"
-
-	para "Afterward, go on"
-	line "to the next town."
 	done
 
-_OaksLabOak1YouShouldTalkToIt::
-	text "OAK: You should"
-	line "talk to it and"
-	cont "see how it feels."
+_OaksLabOak1RaiseYourYoungPokemonText::
+	text "OAK: <PLAYER>,"
+	line "raise your young"
+	cont "#MON by making"
+	cont "it fight!"
 	done
 
 _OaksLabOak1DeliverParcelText::
@@ -72,11 +105,7 @@ _OaksLabOak1ParcelThanksText::
 	para "Ah! This is the"
 	line "custom # BALL"
 	cont "I ordered!"
-	cont "Thanks, <PLAYER>!"
-
-	para "By the way, I must"
-	line "ask you to do"
-	cont "something for me."
+	cont "Thank you, <PLAYER>!"
 	done
 
 _OaksLabOak1PokemonAroundTheWorldText::
@@ -106,10 +135,9 @@ _OaksLabGivePokeballsExplanationText::
 	line "#MON appears,"
 	cont "it's fair game."
 
-	para "Just like I showed"
-	line "you, throw a #"
-	cont "BALL at it and try"
-	cont "to catch it!"
+	para "Just throw a #"
+	line "BALL at it and try"
+	line "to catch it!"
 
 	para "This won't always"
 	line "work, though."
@@ -163,26 +191,34 @@ _OaksLabRivalFedUpWithWaitingText::
 	done
 
 _OaksLabOakChooseMonText::
-	text "OAK: Hmm? <RIVAL>?"
-	line "Why are you here"
-	cont "already?"
+	text "OAK: <RIVAL>?"
+	line "Let me think..."
 
-	para "I said for you to"
-	line "come by later..."
+	para "Oh, that's right,"
+	line "I told you to"
+	cont "come! Just wait!"
 
-	para "Ah, whatever!"
-	line "Just wait there."
+	para "Here, <PLAYER>!"
 
-	para "Look, <PLAYER>! Do"
-	line "you see that ball"
-	cont "on the table?"
+	para "There are 3"
+	line "#MON here!"
 
-	para "It's called a #"
-	line "BALL. It holds a"
-	cont "#MON inside."
+	para "Haha!"
 
-	para "You may have it!"
-	line "Go on, take it!"
+	para "They are inside"
+	line "the # BALLs."
+
+	para "When I was young,"
+	line "I was a serious"
+	cont "#MON trainer!"
+
+	para "In my old age, I"
+	line "chose to study them."
+	
+	para "I have 3 #MON,"
+	line "just for you"
+	cont "you can have"
+	cont "one! Choose!"
 	done
 
 _OaksLabRivalWhatAboutMeText::
@@ -193,68 +229,27 @@ _OaksLabRivalWhatAboutMeText::
 
 _OaksLabOakBePatientText::
 	text "OAK: Be patient,"
-	line "<RIVAL>, I'll give"
-	cont "you one later."
+	line "<RIVAL>, you can"
+	cont "have one too!"
 	done
-
-_OaksLabRivalTakesText1::
-	text "<RIVAL>: No way!"
-	line "<PLAYER>, I want"
-	cont "this #MON!"
-	prompt
-
-_OaksLabRivalTakesText2::
-	text "<RIVAL> snatched"
-	line "the #MON!@"
-	text_end
-
-_OaksLabRivalTakesText3::
-	text "OAK: <RIVAL>! What"
-	line "are you doing?"
-	prompt
-
-_OaksLabRivalTakesText4::
-	text "<RIVAL>: Gramps, I"
-	line "want this one!"
-	prompt
-
-_OaksLabRivalTakesText5::
-	text "OAK: But, I... Oh,"
-	line "all right then."
-	cont "That #MON is"
-	cont "yours."
-
-	para "I was going to"
-	line "give you one"
-	cont "anyway..."
-
-	para "<PLAYER>, come over"
-	line "here."
-	done
-
-_OaksLabOakGivesText::
-	text "OAK: <PLAYER>, this"
-	line "is the #MON I"
-	cont "caught earlier."
-
-	para "You can have it."
-	line "I caught it in"
-	cont "the wild and it's"
-	cont "not tame yet."
-	prompt
-
-_OaksLabReceivedText::
-	text "<PLAYER> received"
-	line "a @"
-	text_ram wNameBuffer
-	text "!@"
-	text_end
 
 _OaksLabOakDontGoAwayYetText::
 	text "OAK: Hey! Don't go"
 	line "away yet!"
 	done
 
+_OaksLabRivalIllTakeThisOneText::
+	text "<RIVAL>: I'll take"
+	line "this one, then!"
+	done
+
+_OaksLabRivalReceivedMonText::
+	text "<RIVAL> received"
+	line "a @"
+	text_ram wNameBuffer
+	text "!@"
+	text_end
+	
 _OaksLabRivalIllTakeYouOnText::
 	text "<RIVAL>: Wait"
 	line "<PLAYER>!"
@@ -287,48 +282,19 @@ _OaksLabRivalSmellYouLaterText::
 	line "Smell you later!"
 	done
 
-_OaksLabPikachuDislikesPokeballsText1::
-	text "OAK: What?"
-	done
-
-_OaksLabPikachuDislikesPokeballsText2::
-	text "OAK: Would you"
-	line "look at that!"
-
-	para "It's odd, but it"
-	line "appears that your"
-	cont "PIKACHU dislikes"
-	cont "# BALLs."
-
-	para "You should just"
-	line "keep it with you."
-
-	para "That should make"
-	line "it happy!"
-
-	para "You can talk to it"
-	line "and see how it"
-	cont "feels about you."
-	done
-
 _OaksLabRivalGrampsText::
 	text "<RIVAL>: Gramps!"
 	done
 
-_OaksLabRivalMyPokemonHasGrownStrongerText::
-	text "<RIVAL>: Gramps,"
-	line "my #MON has"
-	cont "grown stronger!"
-	cont "Check it out!"
+_OaksLabRivalWhatDidYouCallMeForText::
+	text "<RIVAL>: What did"
+	line "you call me for?"
 	done
 
 _OaksLabOakIHaveARequestText::
-	text "OAK: Ah, <RIVAL>,"
-	line "good timing!"
-
-	para "I needed to ask"
-	line "both of you to do"
-	cont "something for me."
+	text "OAK: Oh right! I"
+	line "have a request"
+	cont "of you two."
 	done
 
 _OaksLabOakMyInventionPokedexText::

@@ -17,9 +17,6 @@ CeruleanMelanieHouseMelanieText:
 	jr nz, .asm_1cfbf
 	ld hl, CeruleanHouse1Text_1cfc8
 	call PrintText
-	ld a, [wPikachuHappiness]
-	cp 147
-	jr c, .asm_1cfb3
 	ld hl, CeruleanHouse1Text_1cfce
 	call PrintText
 	call YesNoChoice

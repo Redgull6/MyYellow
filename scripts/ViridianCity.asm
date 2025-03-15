@@ -221,7 +221,6 @@ ViridianCityPostInitialCatchTraining:
 	ld a, [wXCoord]
 	cp 19
 	jr z, .move_old_man
-	callfar ViridianCityMovePikachu
 	ld de, ViridianCityOldManMovementData1
 .move_old_man
 	ld a, VIRIDIANCITY_OLD_MAN2

@@ -27,7 +27,6 @@ DisplayTextID::
 	ld [wSpriteIndex], a
 
 	dict TEXT_START_MENU,       DisplayStartMenu
-	dict TEXT_PIKACHU_ANIM,     DisplayPikachuEmotion
 	dict TEXT_SAFARI_GAME_OVER, DisplaySafariGameOverText
 	dict TEXT_MON_FAINTED,      DisplayPokemonFaintedText
 	dict TEXT_BLACKED_OUT,      DisplayPlayerBlackedOutText
@@ -219,7 +218,3 @@ DisplayRepelWoreOffText::
 RepelWoreOffText::
 	text_far _RepelWoreOffText
 	text_end
-
-DisplayPikachuEmotion::
-	callfar TalkToPikachu
-	jp CloseTextDisplay

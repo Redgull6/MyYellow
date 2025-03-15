@@ -1,5 +1,6 @@
 SummerBeachHouse_Script:
 	call EnableAutoTextBoxDrawing
+	call IsSurfingPikachuInParty
 	ret
 
 SummerBeachHouse_TextPointers:
@@ -13,7 +14,7 @@ SummerBeachHouse_TextPointers:
 
 SummerBeachHouseSurfinDudeText:
 	text_asm
-	ld a, [wd471]
+	ld a, [wIsSurfingPikachuInParty]
 	vc_patch Bypass_need_Pikachu_with_Surf_for_minigame
 IF DEF (_YELLOW_VC)
 	bit 7, a
@@ -26,7 +27,7 @@ ENDC
 	call PrintText
 	jr .done
 .next
-	ld hl, wd492
+	ld hl, wAlreadySpokeToSurfinDude
 	bit 0, [hl]
 	set 0, [hl]
 	jr nz, .next2
@@ -43,7 +44,7 @@ ENDC
 	ld a, 1
 	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
 	farcall SurfingPikachuMinigame
-	ld hl, wd492
+	ld hl, wAlreadySpokeToSurfinDude
 	set 1, [hl]
 	jr .done
 .asm_f226b
@@ -81,7 +82,7 @@ SummerBeachHousePikachuText:
 SummerBeachHousePoster1Text:
 	text_asm
 	ld hl, .SummerBeachHousePoster1Text2
-	ld a, [wd471]
+	ld a, [wIsSurfingPikachuInParty]
 	bit 6, a
 	jr z, .next
 	ld hl, .SummerBeachHousePoster1Text1
@@ -99,7 +100,7 @@ SummerBeachHousePoster1Text:
 SummerBeachHousePoster2Text:
 	text_asm
 	ld hl, .SummerBeachHousePoster2Text2
-	ld a, [wd471]
+	ld a, [wIsSurfingPikachuInParty]
 	bit 6, a
 	jr z, .next
 	ld hl, .SummerBeachHousePoster2Text1
@@ -117,7 +118,7 @@ SummerBeachHousePoster2Text:
 SummerBeachHousePoster3Text:
 	text_asm
 	ld hl, .SummerBeachHousePoster3Text2
-	ld a, [wd471]
+	ld a, [wIsSurfingPikachuInParty]
 	bit 6, a
 	jr z, .next
 	ld hl, .SummerBeachHousePoster3Text1
@@ -136,7 +137,7 @@ SummerBeachHousePrinterText:
 	text_asm
 	ld a, 1
 	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
-	ld a, [wd471]
+	ld a, [wIsSurfingPikachuInParty]
 	vc_patch Bypass_need_Pikachu_with_Surf_for_high_score
 IF DEF(_YELLOW_VC)
 	bit 7, a
@@ -146,7 +147,7 @@ ENDC
 	vc_patch_end
 	jr z, .asm_f2369
 
-	ld hl, wd492
+	ld hl, wAlreadySpokeToSurfinDude
 	bit 1, [hl]
 	jr z, .next2
 	ld a, 0
@@ -154,7 +155,7 @@ ENDC
 .next2
 	ld hl, .SummerBeachHousePrinterText2
 	call PrintText
-	ld a, [wd492]
+	ld a, [wAlreadySpokeToSurfinDude]
 	bit 1, a
 	jr z, .asm_f236f
 
@@ -207,3 +208,43 @@ ENDC
 .SummerBeachHousePrinterText4
 	text_far _SummerBeachHousePrinterText4
 	text_end
+
+IsSurfingPikachuInParty::
+; set bit 6 of wIsSurfingPikachuInParty if true
+	ld a, [wIsSurfingPikachuInParty]
+	and $3f
+	ld [wIsSurfingPikachuInParty], a
+	ld hl, wPartyMon1
+	ld c, PARTY_LENGTH
+	ld b, SURF
+.loop
+	ld a, [hl]
+	cp PIKACHU
+	jr nz, .notPikachu
+	push hl
+	ld de, $8
+	add hl, de
+	ld a, [hli]
+	cp b ; does pikachu have surf as one of its moves
+	jr z, .hasSurf
+	ld a, [hli]
+	cp b
+	jr z, .hasSurf
+	ld a, [hli]
+	cp b
+	jr z, .hasSurf
+	ld a, [hli]
+	cp b
+	jr nz, .noSurf
+.hasSurf
+	ld a, [wIsSurfingPikachuInParty]
+	set 6, a
+	ld [wIsSurfingPikachuInParty], a
+.noSurf
+	pop hl
+.notPikachu
+	ld de, wPartyMon2 - wPartyMon1
+	add hl, de
+	dec c
+	jr nz, .loop
+	ret

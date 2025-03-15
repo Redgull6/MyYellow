@@ -9,11 +9,6 @@ Route25_Script:
 	ret
 
 Route25ShowHideBillScript:
-	ld hl, wd492
-	res 2, [hl]
-	res 3, [hl]
-	res 4, [hl]
-	res 7, [hl]
 	xor a
 	ld [wBillsHouseCurScript], a
 	ld hl, wCurrentMapScriptFlags

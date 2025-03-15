@@ -97,8 +97,23 @@ SSAnne2FRivalStartBattleScript:
 	call Delay3
 	ld a, OPP_RIVAL2
 	ld [wCurOpponent], a
+	
+	; select which team to use during the encounter
+	ld a, [wRivalStarter]
+	cp STARTER2
+	jr nz, .NotSquirtle
 	ld a, $1
+	jr .done
+.NotSquirtle
+	cp STARTER3
+	jr nz, .Charmander
+	ld a, $2
+	jr .done
+.Charmander
+	ld a, $3
+.done
 	ld [wTrainerNo], a
+
 	call SSAnne2FSetFacingDirectionScript
 	ld a, SCRIPT_SSANNE2F_RIVAL_AFTER_BATTLE
 	ld [wSSAnne2FCurScript], a

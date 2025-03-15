@@ -74,7 +74,6 @@ PokemonTower2FDefeatedRivalScript:
 	ld de, PokemonTower2FRivalDownThenRightMovement
 	CheckEvent EVENT_POKEMON_TOWER_RIVAL_ON_LEFT
 	jr nz, .got_movement
-	callfar PokemonTower2FPikachuMovementScript
 	ld de, PokemonTower2FRivalRightThenDownMovement
 .got_movement
 	ld a, POKEMONTOWER2F_RIVAL
@@ -147,8 +146,21 @@ PokemonTower2FRivalText:
 	call SaveEndBattleTextPointers
 	ld a, OPP_RIVAL2
 	ld [wCurOpponent], a
+	
+	; select which team to use during the encounter
 	ld a, [wRivalStarter]
-	add $1
+	cp STARTER2
+	jr nz, .NotSquirtle
+	ld a, $4
+	jr .done
+.NotSquirtle
+	cp STARTER3
+	jr nz, .Charmander
+	ld a, $5
+	jr .done
+.Charmander
+	ld a, $6
+.done
 	ld [wTrainerNo], a
 
 	ld a, SCRIPT_POKEMONTOWER2F_DEFEATED_RIVAL

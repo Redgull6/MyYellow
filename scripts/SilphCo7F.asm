@@ -185,11 +185,22 @@ SilphCo7FRivalStartBattleScript:
 	ld a, OPP_RIVAL2
 	ld [wCurOpponent], a
 	ld a, [wRivalStarter]
-	add 4
+	cp STARTER2
+	jr nz, .asm_51cb6
+	ld a, $7
+	jr .asm_51cc0
+.asm_51cb6
+	cp STARTER3
+	jr nz, .asm_51cbe
+	ld a, $8
+	jr .asm_51cc0
+.asm_51cbe
+	ld a, $9
+.asm_51cc0
 	ld [wTrainerNo], a
 	ld a, SCRIPT_SILPHCO7F_RIVAL_AFTER_BATTLE
-	call SilphCo7FSetCurScript
-	ret
+	jp SilphCo7FSetCurScript
+	
 
 SilphCo7FRivalAfterBattleScript:
 	ld a, [wIsInBattle]

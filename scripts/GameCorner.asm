@@ -72,12 +72,8 @@ GameCornerRocketBattleScript:
 .not_direct_movement
 	ld a, [wXCoord]
 	cp 8
-	jr nz, .pikachu
+	jr nz, .got_rocket_movement
 	ld de, GameCornerMovement_Rocket_WalkDirect
-	jr .got_rocket_movement
-.pikachu
-	callfar GameCornerPikachuMovementScript
-	ld de, GameCornerMovement_Rocket_WalkAroundPlayer
 .got_rocket_movement
 	ld a, GAMECORNER_ROCKET
 	ldh [hSpriteIndex], a

@@ -114,9 +114,7 @@ ItemUseBall:
 
 ; If this is for the old man battle, skip checking if the party & box are full.
 	ld a, [wBattleType]
-	cp BATTLE_TYPE_OLD_MAN
-	jr z, .canUseBall
-	cp BATTLE_TYPE_PIKACHU
+	dec a
 	jr z, .canUseBall
 
 	ld a, [wPartyCount] ; is party full?
@@ -155,26 +153,16 @@ ItemUseBall:
 	jp z, .setAnimData
 
 	ld a, [wBattleType]
-	cp BATTLE_TYPE_OLD_MAN
-	jr z, .oldManBattle
-	cp BATTLE_TYPE_PIKACHU
-	jr z, .oldManBattle ; pikachu battle technically old man battle
-	jr .notOldManBattle
+	dec a
+	jr nz, .notOldManBattle
 
 .oldManBattle
 	ld hl, wGrassRate
 	ld de, wPlayerName
 	ld bc, NAME_LENGTH
 	call CopyData ; save the player's name in the Wild Monster data (part of the Cinnabar Island Missingno. glitch)
-	ld a, [wBattleType]
-	cp BATTLE_TYPE_OLD_MAN
-	jp nz, .captured
-	ld a, $1
-	ld [wCapturedMonSpecies], a
-	CheckEvent EVENT_INITIAL_CATCH_TRAINING
-	ld b, $63
-	jp nz, .setAnimData
 	jp .captured
+	
 .notOldManBattle
 ; If the player is fighting the ghost Marowak, set the value that indicates the
 ; Pokémon can't be caught and skip the capture calculations.
@@ -519,10 +507,8 @@ ItemUseBall:
 	ld [wCurPartySpecies], a
 	ld [wPokedexNum], a
 	ld a, [wBattleType]
-	cp BATTLE_TYPE_OLD_MAN ; is this the old man battle?
-	jp z, .oldManCaughtMon ; if so, don't give the player the caught Pokémon
-	cp BATTLE_TYPE_PIKACHU
-	jr z, .oldManCaughtMon ; same with Pikachu battle
+	dec a ; is this the old man battle?
+	jr z, .oldManCaughtMon ; if so, don't give the player the caught Pokémon
 	ld hl, ItemUseBallText05
 	call PrintText
 
@@ -554,10 +540,6 @@ ItemUseBall:
 	predef ShowPokedexData
 
 .skipShowingPokedexData
-	ld a, $1
-	ld [wd49b], a
-	ld a, $85
-	ld [wPikachuMood], a
 	ld a, [wPartyCount]
 	cp PARTY_LENGTH ; is party full?
 	jr z, .sendToBox
@@ -666,8 +648,6 @@ ItemUseBicycle:
 	call ItemUseReloadOverworldData
 	xor a
 	ld [wWalkBikeSurfState], a ; change player state to walking
-	ld a, $00
-	ld [wPikachuSpawnState], a
 	call PlayDefaultMusic ; play walking music
 	ld hl, GotOffBicycleText
 	jp PrintText
@@ -733,10 +713,6 @@ ItemUseSurfboard:
 
 .stopSurfing
 	call .makePlayerMoveForward
-	ld a, $3
-	ld [wPikachuSpawnState], a
-	ld hl, wPikachuOverworldStateFlags
-	set 5, [hl]
 	ld hl, wStatusFlags5
 	set BIT_SCRIPTED_MOVEMENT_STATE, [hl]
 	xor a
@@ -802,22 +778,6 @@ ItemUseEvoStone:
 	ld [wCurPartySpecies], a
 	call Func_d85d
 	jr nc, .noEffect
-	callfar IsThisPartymonStarterPikachu_Party
-	jr nc, .notPlayerPikachu
-	ld e, $1b
-	callfar PlayPikachuSoundClip
-	ld a, [wWhichPokemon]
-	ld hl, wPartyMonNicks
-	call GetPartyMonName
-	ld hl, RefusingText
-	call PrintText
-	ld a, $4
-	ld [wd49b], a
-	ld a, $82
-	ld [wPikachuMood], a
-	jr .canceledItemUse
-
-.notPlayerPikachu
 	ld a, SFX_HEAL_AILMENT
 	call PlaySoundWaitForCurrent
 	call WaitForSoundToFinish
@@ -926,16 +886,6 @@ ItemUseMedicine:
 	ld e, a
 	ld [wCurSpecies], a
 	pop af
-	push af
-	cp CALCIUM + 1
-	jr nc, .noHappinessBoost
-	push hl
-	push de
-	callabd_ModifyPikachuHappiness PIKAHAPPY_USEDITEM
-	pop de
-	pop hl
-.noHappinessBoost
-	pop af
 	ld [wCurItem], a
 	pop af
 	ld [wWhichPokemon], a
@@ -1026,20 +976,6 @@ ItemUseMedicine:
 	jp .healingItemNoEffect
 
 .updateInBattleFaintedData
-	ld a, [wWhichPokemon]
-	push af
-	ld a, [wUsedItemOnWhichPokemon]
-	ld [wWhichPokemon], a
-	push hl
-	push de
-	push bc
-	callfar RespawnOverworldPikachu
-	pop bc
-	pop de
-	pop hl
-	pop af
-	ld [wWhichPokemon], a
-
 	ld a, [wIsInBattle]
 	and a
 	jr z, .compareCurrentHPToMaxHP
@@ -1533,14 +1469,6 @@ ItemUseMedicine:
 
 	xor a
 	ld [wForceEvolution], a
-	callabd_ModifyPikachuHappiness PIKAHAPPY_LEVELUP
-	ld a, [wWhichPokemon]
-	push af
-	ld a, [wUsedItemOnWhichPokemon]
-	ld [wWhichPokemon], a
-	callfar RespawnOverworldPikachu ; evolve pokemon, if appropriate
-	pop af
-	ld [wWhichPokemon], a
 
 	callfar TryEvolvingMon
 	ld a, $01
@@ -1646,7 +1574,6 @@ ItemUseEscapeRope:
 	ld hl, wStatusFlags6
 	set BIT_FLY_WARP, [hl]
 	set BIT_ESCAPE_WARP, [hl]
-	call Func_1510
 	ld hl, wStatusFlags4
 	res BIT_NO_BATTLES, [hl]
 	ResetEvent EVENT_IN_SAFARI_ZONE
@@ -1687,7 +1614,6 @@ ItemUseXAccuracy:
 	jp z, ItemUseNotTime
 	ld hl, wPlayerBattleStatus2
 	set USING_X_ACCURACY, [hl] ; X Accuracy bit
-	callabd_ModifyPikachuHappiness PIKAHAPPY_USEDXITEM
 	jp PrintItemUseTextAndRemoveItem
 
 ; This function is bugged and never works. It always jumps to ItemUseNotTime.
@@ -1761,15 +1687,6 @@ ItemUseGuardSpec:
 	ld a, [wIsInBattle]
 	and a
 	jp z, ItemUseNotTime
-
-	ld a, [wWhichPokemon]
-	push af
-	ld a, [wPlayerMonNumber]
-	ld [wWhichPokemon], a
-	callabd_ModifyPikachuHappiness PIKAHAPPY_USEDXITEM
-	pop af
-	ld [wWhichPokemon], a
-
 	ld hl, wPlayerBattleStatus2
 	set PROTECTED_BY_MIST, [hl] ; Mist bit
 	jp PrintItemUseTextAndRemoveItem
@@ -1786,15 +1703,6 @@ ItemUseDireHit:
 	ld a, [wIsInBattle]
 	and a
 	jp z, ItemUseNotTime
-
-	ld a, [wWhichPokemon]
-	push af
-	ld a, [wPlayerMonNumber]
-	ld [wWhichPokemon], a
-	callabd_ModifyPikachuHappiness PIKAHAPPY_USEDXITEM
-	pop af
-	ld [wWhichPokemon], a
-
 	ld hl, wPlayerBattleStatus2
 	set GETTING_PUMPED, [hl] ; Focus Energy bit
 	jp PrintItemUseTextAndRemoveItem
@@ -1826,15 +1734,6 @@ ItemUseXStat:
 	xor a
 	ldh [hWhoseTurn], a ; set turn to player's turn
 	farcall StatModifierUpEffect ; do stat increase move
-
-	ld a, [wWhichPokemon]
-	push af
-	ld a, [wPlayerMonNumber]
-	ld [wWhichPokemon], a
-	callabd_ModifyPikachuHappiness PIKAHAPPY_USEDXITEM
-	pop af
-	ld [wWhichPokemon], a
-
 	pop hl
 	pop af
 	ld [hld], a ; restore [wPlayerMoveEffect]
@@ -1852,11 +1751,11 @@ ItemUsePokeFlute:
 	cp ROUTE_12
 	jr nz, .notRoute12
 	CheckEvent EVENT_BEAT_ROUTE12_SNORLAX
-	jr nz, .noSnorlaxOrPikachuToWakeUp
+	jr nz, .noSnorlaxToWakeUp
 ; if the player hasn't beaten Route 12 Snorlax
 	ld hl, Route12SnorlaxFluteCoords
 	call ArePlayerCoordsInArray
-	jr nc, .noSnorlaxOrPikachuToWakeUp
+	jr nc, .noSnorlaxToWakeUp
 	ld hl, PlayedFluteHadEffectText
 	call PrintText
 	SetEvent EVENT_FIGHT_ROUTE12_SNORLAX
@@ -1864,33 +1763,18 @@ ItemUsePokeFlute:
 
 .notRoute12
 	cp ROUTE_16
-	jr nz, .notRoute16
+	jr nz, .noSnorlaxToWakeUp
 	CheckEvent EVENT_BEAT_ROUTE16_SNORLAX
-	jr nz, .noSnorlaxOrPikachuToWakeUp
+	jr nz, .noSnorlaxToWakeUp
 ; if the player hasn't beaten Route 16 Snorlax
 	ld hl, Route16SnorlaxFluteCoords
 	call ArePlayerCoordsInArray
-	jr nc, .noSnorlaxOrPikachuToWakeUp
+	jr nc, .noSnorlaxToWakeUp
 	ld hl, PlayedFluteHadEffectText
 	call PrintText
 	SetEvent EVENT_FIGHT_ROUTE16_SNORLAX
 	ret
-
-.notRoute16
-	cp PEWTER_POKECENTER
-	jr nz, .noSnorlaxOrPikachuToWakeUp
-	call CheckPikachuFollowingPlayer
-	jr z, .noSnorlaxOrPikachuToWakeUp
-	callfar IsPikachuRightNextToPlayer
-	jr nc, .noSnorlaxOrPikachuToWakeUp
-	ld hl, PlayedFluteHadEffectText
-	call PrintText
-	call ItemUseReloadOverworldData
-	ldpikaemotion e, PikachuEmotion26
-	callfar PlaySpecificPikachuEmotion
-	ret
-
-.noSnorlaxOrPikachuToWakeUp
+.noSnorlaxToWakeUp
 	ld hl, PlayedFluteNoEffectText
 	jp PrintText
 
@@ -2120,10 +2004,6 @@ FishingInit:
 	call PrintText
 	ld a, SFX_HEAL_AILMENT
 	call PlaySound
-	ld a, $2
-	ld [wd49b], a
-	ld a, $81
-	ld [wPikachuMood], a
 	ld c, 80
 	call DelayFrames
 	and a
@@ -2477,8 +2357,6 @@ ItemUseTMHM:
 	callfar CheckIfMoveIsKnown ; check if the pokemon already knows the move
 	jr c, .chooseMon
 	predef LearnMove ; teach move
-	ld a, [wWhichPokemon]
-	ld d, a
 	pop af
 	ld [wCurItem], a
 	pop af
@@ -2486,28 +2364,6 @@ ItemUseTMHM:
 	ld a, b
 	and a
 	ret z
-
-	ld a, [wWhichPokemon]
-	push af
-	ld a, d
-	ld [wWhichPokemon], a
-	callabd_ModifyPikachuHappiness PIKAHAPPY_USEDTMHM
-	callfar IsThisPartymonStarterPikachu_Party
-	jr nc, .notTeachingThunderboltOrThunderToPikachu
-	ld a, [wCurItem]
-	cp TM_THUNDERBOLT ; are we teaching thunderbolt to the player pikachu?
-	jr z, .teachingThunderboltOrThunderToPlayerPikachu
-	cp TM_THUNDER ; are we teaching thunder then?
-	jr nz, .notTeachingThunderboltOrThunderToPikachu
-.teachingThunderboltOrThunderToPlayerPikachu
-	ld a, $5
-	ld [wd49b], a
-	ld a, $85
-	ld [wPikachuMood], a
-.notTeachingThunderboltOrThunderToPikachu
-	pop af
-	ld [wWhichPokemon], a
-
 	ld a, [wCurItem]
 	call IsItemHM
 	ret c

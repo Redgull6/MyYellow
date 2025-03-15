@@ -189,9 +189,6 @@ PewterGymGuideText:
 	ld a, [wCurrentMenuItem]
 	and a
 	jr nz, .PewterGymGuideBeginAdviceText
-	ld a, [wd471]
-	bit 7, a
-	jp nz, .asm_5c3fa
 	ld hl, PewterGymGuideBeginAdviceText
 	call PrintText
 	jr .PewterGymGuideAdviceText
@@ -206,10 +203,6 @@ PewterGymGuideText:
 	ld hl, PewterGymGuidePostBattleText
 	call PrintText
 .done
-	jp TextScriptEnd
-.asm_5c3fa
-	ld hl, PewterGymText_5c41c
-	call PrintText
 	jp TextScriptEnd
 
 PewterGymGuidePreAdviceText:
@@ -230,8 +223,4 @@ PewterGymGuideFreeServiceText:
 
 PewterGymGuidePostBattleText:
 	text_far _PewterGymGuidePostBattleText
-	text_end
-
-PewterGymText_5c41c:
-	text_far _PewterGymGuyText
 	text_end

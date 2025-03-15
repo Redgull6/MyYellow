@@ -37,9 +37,6 @@ VictoryRoad3FDefaultScript:
 	ld a, [wCoordIndex]
 	cp $1
 	jr nz, .handle_hole
-	ldh a, [hSpriteIndex]
-	cp $f ; Pikachu
-	jp z, .check_switch_hole
 	ld hl, wCurrentMapScriptFlags
 	set BIT_CUR_MAP_LOADED_1, [hl]
 	SetEvent EVENT_VICTORY_ROAD_3_BOULDER_ON_SWITCH1

@@ -210,10 +210,8 @@ ROMX $3A
 	"bank3A"
 ; bank $3B is empty
 ROMX $3C
-	"Pikachu PCM"
+	"Specific Script Flags"
 	"Tilesets 4"
-	"Try Pikachu Movement"
-	"Pikachu Graphics 2"
 	"Credits"
 	"Maps 22"
 	"Hidden Objects Core"
@@ -224,7 +222,7 @@ ROMX $3D
 ROMX $3E
 	"Surfing Minigame"
 ROMX $3F
-	"Overworld Pikachu"
+	"Map Header Pointers"
 	"NPC Sprites 3"
 WRAM0
 	"Audio RAM"
